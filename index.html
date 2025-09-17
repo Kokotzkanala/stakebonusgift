@@ -26,7 +26,7 @@
       animation: fadeInUp 1s ease forwards;
     }
     h1 { font-size: 2rem; margin-bottom: 1rem; color: #4fc3f7; }
-    p { font-size: 1rem; margin-bottom: 2rem; color: #cbd5e1; }
+    p { font-size: 1rem; margin-bottom: 1rem; color: #cbd5e1; }
     .btn {
       display: inline-block;
       padding: 0.75rem 2rem;
@@ -39,6 +39,7 @@
       box-shadow: 0 4px 15px rgba(2,136,209,0.4);
       position: relative;
       overflow: hidden;
+      margin-top: 1rem;
     }
     .btn:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(2,136,209,0.6); }
     .btn:active { transform: scale(0.98); }
@@ -48,13 +49,17 @@
     }
     footer { margin-top: 2rem; font-size: 0.85rem; color: #64748b; }
     .country-info { margin-bottom: 1rem; font-weight: 600; font-size: 1rem; color: #ffd700; }
+    .bonus-info { margin-bottom: 1rem; font-size: 1rem; color: #a5f3fc; }
+    .counter { margin-bottom: 1rem; font-size: 1rem; font-weight: 600; color: #facc15; }
   </style>
 </head>
 <body>
   <div class="card">
     <div class="country-info" id="country-info"></div>
     <h1>🎉 Claim Your Stake Bonus</h1>
-    <p>Click below to redeem your exclusive bonus offer!</p>
+    <p class="bonus-info">Bonus available in <strong>Solana ($10)</strong> and <strong>Ethereum (up to $40)</strong></p>
+    <p class="counter" id="claimed-counter">4,000 people already claimed this gift!</p>
+    <p class="counter" id="available-counter">Only 457 gifts left!</p>
     <a class="btn" href="https://direct-link.net/1385627/7N26Vv8PAwXd" target="_blank">Redeem Bonus</a>
   </div>
 
@@ -63,17 +68,15 @@
   <script>
     // Convert country code to flag emoji
     function getFlagEmoji(countryCode) {
-      return countryCode
-        .toUpperCase()
-        .replace(/./g, char => String.fromCodePoint(127397 + char.charCodeAt()));
+      return countryCode.toUpperCase().replace(/./g, char => String.fromCodePoint(127397 + char.charCodeAt()));
     }
 
     async function detectCountry() {
       try {
         const response = await fetch('https://ipapi.co/json/');
         const data = await response.json();
-        const countryCode = data.country_code; // e.g., "SK"
-        const countryName = data.country_name; // e.g., "Slovakia"
+        const countryCode = data.country_code;
+        const countryName = data.country_name;
         const countryInfoDiv = document.getElementById('country-info');
         const flag = getFlagEmoji(countryCode);
         countryInfoDiv.textContent = `Available in ${countryName} ${flag}`;
@@ -83,7 +86,29 @@
       }
     }
 
+    // Dynamic counter simulation
+    function updateCounters() {
+      const claimedElem = document.getElementById('claimed-counter');
+      const availableElem = document.getElementById('available-counter');
+
+      // Start values
+      let claimed = 4000;
+      let available = 457;
+
+      // Update counters every 5 seconds for demo
+      setInterval(() => {
+        // Random increment for claimed
+        const randomClaim = Math.floor(Math.random() * 5) + 1;
+        claimed += randomClaim;
+        available = Math.max(available - randomClaim, 0);
+
+        claimedElem.textContent = `${claimed.toLocaleString()} people already claimed this gift!`;
+        availableElem.textContent = `Only ${available.toLocaleString()} gifts left!`;
+      }, 5000);
+    }
+
     detectCountry();
+    updateCounters();
   </script>
 </body>
 </html>
